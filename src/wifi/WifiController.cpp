@@ -10,10 +10,11 @@ void WifiController::setup(Settings* settings, std::function<void()> on_save_cal
 		this->addParameter(p);
 	}
 	this->setSaveParamsCallback(on_save_callback);
-	
+
 	bool is_connected = this->autoConnect(settings->ap_ssid, settings->ap_password);
 	if (is_connected) {
 		this->startWebPortal();
+		LOG("Web portal started")
 	}
 }
 
