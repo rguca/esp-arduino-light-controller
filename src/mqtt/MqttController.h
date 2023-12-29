@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 #include <WiFiClient.h>
 #include <ArduinoMqttClient.h>
 #include <ArduinoJson.h>
@@ -21,7 +22,14 @@ public:
     void registerTemperature(const char* name);
     void registerVoltage(const char* name);
     void registerDuration(const char* name);
+
+    void registerLight(const char* name, bool default_state = false);
+
     void sendValue(const char* name, float value);
+    void sendValue(const char* component, const char* name, const char* value);
+
+    void poll();
+    void onLightChange(const char* name, std::function<void(bool)> callback);
 
 protected:
     struct Device {
@@ -34,7 +42,13 @@ protected:
     } device;
 
     WiFiClient wifi_client;
+    std::map<String, std::function<void(String)>> on_message_callbacks;
 
-    void registerMeasurement(const char* name, JsonDocument* doc);
+    void registerSensor(const char* name, JsonDocument* doc);
+    void registerComponent(const char* component, const char* name, JsonDocument* doc);
+
+    String getTopic(const char* component, const char* name);
+    String getStateTopic(const char* component, const char* name);
+    String getHomeassistantTopic(const char* component, const char* name);
     String convertName(const char* name);
 };
