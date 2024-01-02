@@ -17,7 +17,8 @@ public:
 	WifiController::Settings* getWifiSettings();
 	MqttController::Settings* getMqttSettings();
 	bool isRebooted();
-	void setRebooted(bool value = true);
+
+	// void enterLightSleep(uint32 duration);
 
 	~SettingsController();
 

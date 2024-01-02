@@ -19,6 +19,10 @@ void SettingsController::load() {
 }
 
 void SettingsController::save() {
+	if (!this->rtc_data->is_rebooted) {
+		this->rtc_data->is_rebooted = true;
+		LOG("Set rebooted flag")
+	}
 	if (this->rtc_memory.save()) {
 		LOG("Saved");
 	} else {
@@ -69,9 +73,40 @@ bool SettingsController::isRebooted() {
 	return this->rtc_data->is_rebooted;
 }
 
-void SettingsController::setRebooted(bool value) {
-	this->rtc_data->is_rebooted = value;
-}
+// void SettingsController::enterLightSleep(uint32 duration) {
+// 	LOG("Entering light sleep for %dms", duration)
+// 	#ifdef ENABLE_LOG
+// 		Serial.flush();
+// 	#endif
+
+// 	extern os_timer_t* timer_list;
+// 	timer_list = nullptr;  // stop (but don't disable) the 4 OS timers
+	
+// 	station_config fwconfig;
+// 	// memset(fwconfig.bssid, 0xff, 6);
+// 	wifi_station_get_config(&fwconfig);
+
+// 	//wifi_station_disconnect(); 
+// 	wifi_set_opmode_current(NULL_MODE); // Need to disconnect WiFi, otherwise WDT soft reset error
+// 	wifi_fpm_set_sleep_type(LIGHT_SLEEP_T);
+// 	wifi_fpm_open();
+// 	// wifi_fpm_set_wakeup_cb(callback);
+// 	wifi_fpm_do_sleep(duration * 1000); // Sleep range = 10000 ~ 268,435,454 uS (0xFFFFFFE, 2^28-1)
+// 	delay(duration + 1);
+
+// 	LOG("Woke from light sleep")
+// 	wifi_fpm_do_wakeup();
+// 	wifi_fpm_close(); // disable force sleep function
+
+// 	// fwconfig.bssid_set = 1;
+// 	// uint8_t bssid[] = { 0xF4,0xEC,0x38,0xAB,0x27,0x10 };
+// 	// std::copy(bssid, bssid + 6, fwconfig.bssid);
+// 	// wifi_station_set_config_current(&fwconfig);
+// 	// wifi_set_channel(1);
+
+// 	wifi_set_opmode_current(STATION_MODE);
+// 	wifi_station_connect();
+// }
 
 SettingsController::~SettingsController() {
 	if (this->wifi_settings) {

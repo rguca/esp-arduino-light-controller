@@ -10,7 +10,7 @@ void MqttController::setup(Settings* settings) {
 	this->device.mf = "espressif";
 	this->setId(String(this->device.mf) + "-" + String(this->device.ids));
 	this->setTxPayloadSize(512);
-	this->setCleanSession(false); // Don't delete old subscriptions
+	//this->setCleanSession(false); // Don't delete old subscriptions
 	
 	this->setUsernamePassword(settings->user, settings->password);
 	if (this->connect(settings->host)) {
@@ -50,16 +50,15 @@ void MqttController::registerSensor(const char* name, JsonDocument* doc) {
 	this->registerComponent("sensor", name, doc);
 }
 
-void MqttController::registerLight(const char* name, bool default_state) {
+void MqttController::registerLight(const char* name) {
 	StaticJsonDocument<512> doc;
 	doc["retain"] = true;
 	doc["cmd_t"] = this->getStateTopic("light", name);
 	this->registerComponent("light", name, &doc);
-	this->sendValue("light", name, default_state ? "ON" : "OFF");
 	LOG("Light %s registered", name)
 }
 
-void MqttController::onLightChange(const char* name, std::function<void(bool)> callback) {
+void MqttController::onLightValue(const char* name, std::function<void(bool)> callback) {
 	String topic = this->getStateTopic("light", name);
 	this->on_message_callbacks[topic] = [callback](String message) { 
 		callback(message == "ON"); 

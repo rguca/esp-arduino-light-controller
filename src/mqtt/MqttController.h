@@ -8,12 +8,12 @@
 class MqttController : public MqttClient {
 public:
     struct Settings  {
-    const char* device_name;
+        const char* device_name;
 
-    const char* host;
-    const char* user;
-    const char* password;
-};
+        const char* host;
+        const char* user;
+        const char* password;
+    };
 
     MqttController();
 
@@ -23,13 +23,13 @@ public:
     void registerVoltage(const char* name);
     void registerDuration(const char* name);
 
-    void registerLight(const char* name, bool default_state = false);
+    void registerLight(const char* name);
 
     void sendValue(const char* name, float value);
     void sendValue(const char* component, const char* name, const char* value);
 
     void poll();
-    void onLightChange(const char* name, std::function<void(bool)> callback);
+    void onLightValue(const char* name, std::function<void(bool)> callback);
 
 protected:
     struct Device {
